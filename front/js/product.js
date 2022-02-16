@@ -63,16 +63,31 @@ if (button != null){
         if (color == null || color ==="" || quantity == null || quantity == 0 || quantity > 100){
             alert("selectionnez une couleur ainsi qu'une quantiter comprise entre 1 et 100 merci !")
         }else{
+            let cart = []
+            let newQuantity = 0
             const key = `${id}-${color}`
+            if (localStorage != null){
+                const numberItems = localStorage.length
+                for (let i = 0; i < numberItems; i++) {
+                    const item = localStorage.getItem(localStorage.key(i))
+                    const itemObject = JSON.parse(item)
+                    cart.push(itemObject)
+                    if (key === localStorage.key(i)){
+                        console.log("quantity", itemObject.quantity)
+                        newQuantity =  itemObject.quantity
+                    }
+                } 
+                console.log("merde", cart)
+            }
             let data = {
             id : id,
             color : color,
-            quantity : Number(quantity),
+            quantity : Number(quantity) + newQuantity,
             name : name,
             imageUrl : Urlimage,
             price : Number(price)
             }
-            //mettre dans le
+            //mettre dans le cache
             localStorage.setItem(key, JSON.stringify(data))
             //fenêtre pop-up
             if (confirm(data.quantity +","+ data.name + 'de couleur '+ data.color + ', a été ajoutée au panier Pour consulter votre panier, cliquez sur OK')) {
