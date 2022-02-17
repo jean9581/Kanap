@@ -1,12 +1,32 @@
+let localCart = []
 let cart = []
 
 getDataFromCache()
 
-chargePage()
-
-function chargePage() {
-    cart.forEach((item) => displayItem(item))
+/*
+async function LoadPrice(itemObject){
+    let responce = await fetch("http://localhost:3000/api/products/" + itemObject.id)
+    let data = await responce.json()
+    
+    let newData = {
+        id : itemObject.id,
+        color : itemObject.color,
+        quantity :itemObject.quantity,
+        name : itemObject.name,
+        imageUrl : data.imageUrl,
+        price : data.price
+    }
+    cart.push(newData)
+    chargePage(newData)
 }
+
+function chargePage(newData) {
+    cart.forEach((newData) => displayItem(newData))
+    
+}
+*/
+
+
 
 
 function getDataFromCache(){
@@ -15,9 +35,24 @@ function getDataFromCache(){
     for (let i = 0; i < numberItems; i++) {
         const item = localStorage.getItem(localStorage.key(i))
         const itemObject = JSON.parse(item)
-        cart.push(itemObject)
+        localCart.push(itemObject)
+
+        fetch("http://localhost:3000/api/products/" + itemObject.id)
+        .then(res => res.json())
+        .then(data => {
+            let newData = {
+                id : itemObject.id,
+                color : itemObject.color,
+                quantity :itemObject.quantity,
+                name : itemObject.name,
+                imageUrl : data.imageUrl,
+                price : data.price
+            }
+            cart.push(newData)
+            displayItem(newData)
+        })
     } 
-        
+          
 }
 function displayArticle(item){
     
@@ -71,8 +106,8 @@ function displayInput(item){
     input.max = "100"
     input.addEventListener ("input", () => {
         updateQuantity(item.id, input.value, item, item.color),
-        displayTotalPrice(),
-        displayTotalQuantity()
+        displayTotalPrice(item),
+        displayTotalQuantity(item)
     })
     return input
 }
@@ -87,16 +122,14 @@ function diplayDivDelete(item){
         itemDelete.remove()
         deleteProduct(item) 
         //getDataFromCache()
-        console.log("sup",cart)
-        console.log("sup",item)
         item.quantity = 0
-        console.log("sup",item)
+        
         displayTotalPrice(item) 
         displayTotalQuantity(item)
     });
     return supprimer
 }
-function diplayDelete(item){ 
+function diplayDelete(){ 
     //deleteItem(item))
     const deleteItem = document.createElement("p")
     deleteItem.classList.add("deleteItem")
@@ -105,8 +138,6 @@ function diplayDelete(item){
 }
 
 function displayItem(item) {
-    console.log("affich",cart)
-    console.log("affich",item)
     if (item != null){
        //crée élément article
         const article = displayArticle(item)

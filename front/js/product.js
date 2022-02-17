@@ -77,7 +77,7 @@ if (button != null){
                         newQuantity =  itemObject.quantity
                     }
                 } 
-                console.log("merde", cart)
+                //console.log("merde", itemObject.key(0))
             }
             let data = {
             id : id,
@@ -85,7 +85,7 @@ if (button != null){
             quantity : Number(quantity) + newQuantity,
             name : name,
             imageUrl : Urlimage,
-            price : Number(price)
+            //price : 0
             }
             //mettre dans le cache
             localStorage.setItem(key, JSON.stringify(data))
