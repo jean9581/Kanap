@@ -1,33 +1,100 @@
+
 let localCart = []
 let cart = []
 
 getDataFromCache()
 
-/*
-async function LoadPrice(itemObject){
-    let responce = await fetch("http://localhost:3000/api/products/" + itemObject.id)
-    let data = await responce.json()
-    
-    let newData = {
-        id : itemObject.id,
-        color : itemObject.color,
-        quantity :itemObject.quantity,
-        name : itemObject.name,
-        imageUrl : data.imageUrl,
-        price : data.price
+
+function submitForm(e){
+    //empéche la page de se recharger
+    e.preventDefault()
+
+    if (cart.length === 0){
+        alert("please select item to buy")
+        return
     }
-    cart.push(newData)
-    chargePage(newData)
-}
-
-function chargePage(newData) {
-    cart.forEach((newData) => displayItem(newData))
     
+    if (formValid())return
+    if (emailValid())return
+    //emailValid()
+
+    const body = contactRequest()
+    const options = {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+            "Content-Type": "application/json" 
+        }
+    }
+    
+    fetch("http://localhost:3000/api/products/order", options)
+    .then((response) => response.json())
+    .then((data) => {
+        const orderId = data.orderId
+        localStorage.clear();
+        //localStorage.setItem("orderId", data.orderId);
+        //window.location.href = "/html/confirmation.html"+"?orderId="+orderId
+        document.location.href = "confirmation.html"+"?orderId="+orderId;
+    })
 }
-*/
 
+function emailValid(){
+    const email = document.querySelector("#email").value
+    //Création d'une expression régulière
+    //const regex = new RegExp('^[a-zA-Z0-9.-_]+[@]{1}[a-zA-Z0-9.-_]+[.]{1}[a-z]{2,10}$');
+    const regex = /^[a-zA-Z0-9.-_]+@(.+)$/
+    
+    if (regex.test(email) === false){
+        alert("please enter valid email")
+        return true
+    }
+    return false
+}
 
+function formValid (){
+    const form = document.querySelector(".cart__order__form")
+    const inputs = form.querySelectorAll("input")
+    inputs.forEach((input) => {
+        if (input.value ===""){
+            alert ("please fill all the fields")
+            return true
+        }
+        return false
+    })
+}
 
+function contactRequest(){
+    const form = document.querySelector(".cart__order__form")
+    const firstName = form.elements.firstName.value
+    const lastName = form.elements.lastName.value
+    const address = form.elements.address.value
+    const city = form.elements.city.value
+    const email = form.elements.email.value
+    let idProducts = []
+        for (let i = 0; i<localStorage.length;i++) {
+            const key = localStorage.key(i)
+            //séparer l'id et la couleur
+            const id = key.split("-")[0]
+            idProducts.push(id);
+        }
+    console.log("id", idProducts);
+    const body = {
+        contact:{
+            firstName: firstName,
+            lastName: lastName,
+            address: address,
+            city: city,
+            email: email,
+        },
+        products: idProducts,
+    }
+    return body
+}
+
+const orderButton = document.querySelector("#order")
+orderButton.addEventListener("click", (event) => {
+    submitForm(event)
+})
 
 function getDataFromCache(){
     //nombre d'ojet ajoutés
@@ -208,7 +275,6 @@ function updateQuantity(id, newValue, item, color) {
 
 function displayTotalQuantity(item) {
     if (item != null){
-        console.log("qui est 0", item )
         const totalQuantity = document.querySelector("#totalQuantity")
         let total = cart.reduce((total, item) => total + item.quantity, 0)
         totalQuantity.textContent = total

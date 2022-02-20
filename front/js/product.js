@@ -59,17 +59,20 @@ if (button != null){
         const quantity = document.querySelector("#quantity").value
         const name = document.querySelector("#title").textContent
         const price = document.querySelector("#price").textContent
-        console.log(price)
+        
         if (color == null || color ==="" || quantity == null || quantity == 0 || quantity > 100){
             alert("selectionnez une couleur ainsi qu'une quantiter comprise entre 1 et 100 merci !")
+        
         }else{
             let cart = []
             let newQuantity = 0
             const key = `${id}-${color}`
             if (localStorage != null){
                 const numberItems = localStorage.length
+                console.log("numberItems",numberItems)
                 for (let i = 0; i < numberItems; i++) {
                     const item = localStorage.getItem(localStorage.key(i))
+                    console.log("item",item)
                     const itemObject = JSON.parse(item)
                     cart.push(itemObject)
                     if (key === localStorage.key(i)){
@@ -77,7 +80,6 @@ if (button != null){
                         newQuantity =  itemObject.quantity
                     }
                 } 
-                //console.log("merde", itemObject.key(0))
             }
             let data = {
             id : id,
@@ -95,5 +97,5 @@ if (button != null){
             }  
         }
         
-    })
+    });
 }
