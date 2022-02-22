@@ -1,14 +1,16 @@
+let Urlimage= "";
 
+//récupération d'Id du produit dans l'url
 const str = window.location.href;
 const url = new URL(str);
 const id = url.searchParams.get("id");
-let Urlimage= "";
 
+//chrager les donner de l'api 
 fetch("http://localhost:3000/api/products/" + id)
     .then(res => res.json())
     .then(data => LoadPage(data))
         
-
+//charger la page
 function LoadPage(kanap){
     const { altTxt, colors, description, imageUrl, name, price, _id } = kanap
     
@@ -55,32 +57,33 @@ function LoadPage(kanap){
 const button = document.querySelector("#addToCart")
 if (button != null){
     button.addEventListener("click", (e) =>{
+        //récupération des donnée a enregistrer 
         const color = document.querySelector("#colors").value
         const quantity = document.querySelector("#quantity").value
         const name = document.querySelector("#title").textContent
-        const price = document.querySelector("#price").textContent
-        
+        //const price = document.querySelector("#price").textContent
+        //vérifier les données entrée 
         if (color == null || color ==="" || quantity == null || quantity == 0 || quantity > 100){
             alert("selectionnez une couleur ainsi qu'une quantiter comprise entre 1 et 100 merci !")
         
         }else{
             let cart = []
             let newQuantity = 0
+            
             const key = `${id}-${color}`
+            //verifier les produis déja dans le panier et mettre les nouvelle quantiter a jour si besoin
             if (localStorage != null){
                 const numberItems = localStorage.length
-                console.log("numberItems",numberItems)
                 for (let i = 0; i < numberItems; i++) {
                     const item = localStorage.getItem(localStorage.key(i))
-                    console.log("item",item)
                     const itemObject = JSON.parse(item)
                     cart.push(itemObject)
                     if (key === localStorage.key(i)){
-                        console.log("quantity", itemObject.quantity)
                         newQuantity =  itemObject.quantity
                     }
                 } 
             }
+            //donnée produits en envoyer dans panier
             let data = {
             id : id,
             color : color,
@@ -92,7 +95,7 @@ if (button != null){
             //mettre dans le cache
             localStorage.setItem(key, JSON.stringify(data))
             //fenêtre pop-up
-            if (confirm(data.quantity +","+ data.name + 'de couleur '+ data.color + ', a été ajoutée au panier Pour consulter votre panier, cliquez sur OK')) {
+            if (confirm(data.quantity +' '+ data.name + ' de couleur '+ data.color + ', a été ajoutée au panier Pour consulter votre panier, cliquez sur OK')) {
                 window.location.href = "cart.html";
             }  
         }

@@ -17,9 +17,10 @@ h2 {
 /************/
 .cart__item {
 	display: flex;
+	flex-direction: row;
 	justify-content: space-around;
 	border-top: 1px solid white;
-	padding-top: 35px;
+	padding-top: 20px;
 	margin-bottom: 30px;
 }
 .cart__item__img {
@@ -42,6 +43,11 @@ h2 {
 .cart__item__content__titlePrice h2,
 .cart__item__content__titlePrice p {
 	margin: 0;
+}
+.cart__item__content__settings {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
 }
 .cart__item__content__settings p {
 	margin: 0;
