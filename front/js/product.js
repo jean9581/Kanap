@@ -9,6 +9,12 @@ const id = url.searchParams.get("id");
 fetch("http://localhost:3000/api/products/" + id)
     .then(res => res.json())
     .then(data => LoadPage(data))
+    .catch((err) => {
+        alert ("produit indisponible");
+        const p = document.querySelector("#description")
+        //affichage de l'élément //name
+        if (p != null) p.textContent = "produit indisponible"
+    })
         
 //charger la page
 function LoadPage(kanap){
@@ -54,16 +60,16 @@ function LoadPage(kanap){
 }
 
 
+
 const button = document.querySelector("#addToCart")
 if (button != null){
     button.addEventListener("click", (e) =>{
         //récupération des donnée a enregistrer 
-        const color = document.querySelector("#colors").value
-        const quantity = document.querySelector("#quantity").value
-        const name = document.querySelector("#title").textContent
-        //const price = document.querySelector("#price").textContent
+        const color = document.querySelector("#colors").value,
+            quantity = Number(document.querySelector("#quantity").value),
+            name = document.querySelector("#title").textContent
         //vérifier les données entrée 
-        if (color == null || color ==="" || quantity == null || quantity == 0 || quantity > 100){
+        if (color == null || color ==="" || quantity == null || quantity == 0 || (quantity < 0 && quantity > 100)){
             alert("selectionnez une couleur ainsi qu'une quantiter comprise entre 1 et 100 merci !")
         
         }else{
@@ -75,22 +81,22 @@ if (button != null){
             if (localStorage != null){
                 const numberItems = localStorage.length
                 for (let i = 0; i < numberItems; i++) {
-                    const item = localStorage.getItem(localStorage.key(i))
-                    const itemObject = JSON.parse(item)
+                    const item = localStorage.getItem(localStorage.key(i)),
+                        itemObject = JSON.parse(item)
+
                     cart.push(itemObject)
                     if (key === localStorage.key(i)){
                         newQuantity =  itemObject.quantity
                     }
                 } 
             }
-            //donnée produits en envoyer dans panier
+            //donnée produits a envoyer dans panier
             let data = {
             id : id,
             color : color,
             quantity : Number(quantity) + newQuantity,
             name : name,
             imageUrl : Urlimage,
-            //price : 0
             }
             //mettre dans le cache
             localStorage.setItem(key, JSON.stringify(data))
